@@ -1,5 +1,6 @@
 package com.senac.aulaapijovemprogramador.model.entities;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.senac.aulaapijovemprogramador.model.valueobjects.CPF;
 
 import java.util.List;
@@ -11,6 +12,7 @@ public class Usuario {
     private String nome;
 
     private String senha;
+
 
     private CPF cpf;
 
