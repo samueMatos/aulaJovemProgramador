@@ -1,26 +1,40 @@
 package com.senac.aulaapijovemprogramador.controllers;
 
+import com.senac.aulaapijovemprogramador.dto.UsuarioCriarRequestDto;
 import com.senac.aulaapijovemprogramador.model.entities.Usuario;
+import com.senac.aulaapijovemprogramador.model.repository.UsuarioRepository;
 import com.senac.aulaapijovemprogramador.model.valueobjects.CPF;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/usuarios")
+@Tag(name = "Usuarios controller",description = "Controladora responsavel por gerenciar os usuarios!")
 public class UsuarioController {
 
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
+
     @GetMapping("/{id}")
-    public Usuario buscarPorId(@PathVariable Long id){
-        var usuario = new Usuario();
+    @Operation(summary = "Consulta de usuario por ID", description = "Médoto responsavel por consultar um unico usuario por ID e se não existir retorna null!")
+    public ResponseEntity<?> buscarPorId(@PathVariable Long id){
+        var usuario = usuarioRepository.findById(id).orElse(null);
 
-		usuario.setId(id);
-		usuario.setNome("Samuel Matos");
-		usuario.setCpf(new CPF("063.720.145-20"));
-		usuario.setEmail("samuel.matos@prof.sc.senac.br");
-		usuario.setTelefone("+55048999655451");
-
-        return usuario;
+        return  ResponseEntity.ok(usuario);
     }
+
+    @PostMapping
+    @Operation(summary = "Criar usuario",description = "Metodo resposavel por criar usuário")
+    public ResponseEntity<?> criarUsuario(@RequestBody UsuarioCriarRequestDto usuario){
+        var usuarioBanco = new Usuario(usuario);
+        usuarioRepository.save(usuarioBanco);
+        return ResponseEntity.ok(usuarioBanco);
+    }
+
+
+
 }

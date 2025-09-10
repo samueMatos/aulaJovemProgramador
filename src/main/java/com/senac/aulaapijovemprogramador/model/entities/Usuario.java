@@ -1,12 +1,27 @@
 package com.senac.aulaapijovemprogramador.model.entities;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.senac.aulaapijovemprogramador.dto.UsuarioCriarRequestDto;
 import com.senac.aulaapijovemprogramador.model.valueobjects.CPF;
+import jakarta.persistence.*;
 
 import java.util.List;
 
+
+@Entity
 public class Usuario {
 
+    public Usuario(){}
+
+    public Usuario (UsuarioCriarRequestDto usuario){
+        this.email =usuario.email();
+        this.senha = usuario.senha();
+        this.cpf = new CPF(usuario.cpf());
+        this.nome = usuario.nome();
+    }
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String nome;
@@ -14,12 +29,15 @@ public class Usuario {
     private String senha;
 
 
+    @Embedded
     private CPF cpf;
 
     private String email;
 
     private String telefone;
 
+    @OneToMany
+    @JoinColumn(name = "usuario_id",nullable = true)
     private List<Menu> menuAcesso;
 
 

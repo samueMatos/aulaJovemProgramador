@@ -11,7 +11,9 @@ public class CPF {
         return cpf;
     }
 
-
+    public CPF(){
+        this.cpf ="";
+    }
     public CPF(String cpf) {
         this.cpf = cpf.replaceAll("[^0-9]","");
     }

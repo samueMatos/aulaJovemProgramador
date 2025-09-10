@@ -1,12 +1,22 @@
 package com.senac.aulaapijovemprogramador.model.entities;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+
+@Entity
 public class Menu {
+
+    public Menu(){}
 
     public Menu(String rota, String descricao) {
         this.descricao = descricao;
         this.rota = rota;
     }
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String descricao;
     private String rota;
