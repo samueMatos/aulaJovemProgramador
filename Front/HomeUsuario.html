@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Lista de Usuários</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    table, th, td {
+      border: 1px solid #cccccc;
+    }
+    th, td {
+      padding: 10px;
+      text-align: left;
+    }
+    th {
+      background-color: #f2f2f2;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <h1>Lista de Usuários</h1>
+  <button onclick="carregarUsuarios()">Carregar Usuários</button>
+  <p id="mensagem" class="error"></p>
+  <table id="tabelaUsuarios" style="display: none;">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Nome</th>
+        <th>CPF</th>
+        <th>Email</th>
+        <th>Telefone</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    async function carregarUsuarios() {
+      const mensagem = document.getElementById('mensagem');
+      const tabela = document.getElementById('tabelaUsuarios');
+      const tbody = tabela.querySelector('tbody');
+      
+      mensagem.textContent = '';
+      tbody.innerHTML = '';
+      tabela.style.display = 'none';
+
+      try {
+        const response = await fetch('http://localhost:8080/usuarios');
+        
+        if (!response.ok) {
+          throw new Error(`Erro: ${response.status}`);
+        }
+
+        const usuarios = await response.json();
+
+        if (usuarios.length === 0) {
+          mensagem.textContent = 'Nenhum usuário encontrado.';
+          return;
+        }
+
+        usuarios.forEach(usuario => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${usuario.id}</td>
+            <td>${usuario.nome}</td>
+            <td>${usuario.cpf}</td>
+            <td>${usuario.email}</td>
+            <td>${usuario.telefone || ''}</td>
+          `;
+          tbody.appendChild(row);
+        });
+
+        tabela.style.display = 'table';
+      } catch (erro) {
+        mensagem.textContent = 'Erro ao buscar usuários: ' + erro.message;
+      }
+    }
+  </script>
+</body>
+</html>

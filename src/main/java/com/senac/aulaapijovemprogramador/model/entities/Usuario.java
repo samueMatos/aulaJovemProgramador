@@ -3,6 +3,7 @@ package com.senac.aulaapijovemprogramador.model.entities;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.senac.aulaapijovemprogramador.dto.UsuarioCriarRequestDto;
 import com.senac.aulaapijovemprogramador.model.valueobjects.CPF;
+import com.senac.aulaapijovemprogramador.model.valueobjects.EnumStatusUsuario;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -20,6 +21,8 @@ public class Usuario {
         this.nome = usuario.nome();
     }
 
+
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -35,6 +38,8 @@ public class Usuario {
     private String email;
 
     private String telefone;
+
+    private EnumStatusUsuario status = EnumStatusUsuario.ATIVO;
 
     @OneToMany
     @JoinColumn(name = "usuario_id",nullable = true)
@@ -95,6 +100,22 @@ public class Usuario {
 
     public void setMenuAcesso(List<Menu> menuAcesso) {
         this.menuAcesso = menuAcesso;
+    }
+
+    public EnumStatusUsuario getStatus() {
+        return status;
+    }
+
+    public void setStatus(EnumStatusUsuario status) {
+        this.status = status;
+    }
+
+    public Usuario atulizarUsuarioFromDTO(Usuario usuarioBanco, UsuarioCriarRequestDto dto){
+        usuarioBanco.setCpf(new CPF(dto.cpf()));
+        usuarioBanco.setEmail(dto.email());
+        usuarioBanco.setNome(dto.nome());
+        usuarioBanco.setSenha(dto.senha());
+        return usuarioBanco;
     }
 
     public String apresentar() {
