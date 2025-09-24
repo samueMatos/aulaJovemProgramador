@@ -8,6 +8,8 @@ import com.senac.aulaapijovemprogramador.model.valueobjects.EnumStatusUsuario;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,13 +36,22 @@ public class UsuarioController {
     @GetMapping("/{id}")
     @Operation(summary = "Consulta de usuario por ID", description = "Médoto responsavel por consultar um unico usuario por ID e se não existir retorna null!")
     public ResponseEntity<?> buscarPorId(@PathVariable Long id){
-        var usuario = usuarioRepository.findByIdAndStatusNot(id,EnumStatusUsuario.EXCLUIDO).orElse(null);
+        try {
 
-        if(usuario == null){
-            return ResponseEntity.notFound().build();
+            var usuario = usuarioRepository.findByIdAndStatusNot(id,EnumStatusUsuario.EXCLUIDO).orElse(null);
+
+            if(usuario == null){
+                return ResponseEntity.notFound().build();
+            }
+
+            return  ResponseEntity.ok(usuario);
+
+        }catch (IllegalArgumentException e){
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
-
-        return  ResponseEntity.ok(usuario);
+        catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
     }
 
     @PostMapping
