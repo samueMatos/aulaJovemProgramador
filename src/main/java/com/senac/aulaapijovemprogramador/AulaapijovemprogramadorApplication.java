@@ -1,11 +1,7 @@
 package com.senac.aulaapijovemprogramador;
 
-import com.senac.aulaapijovemprogramador.model.entities.*;
-import com.senac.aulaapijovemprogramador.model.valueobjects.CPF;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-
-import java.util.*;
 
 @SpringBootApplication
 public class AulaapijovemprogramadorApplication {
