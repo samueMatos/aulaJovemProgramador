@@ -4,11 +4,6 @@ import com.senac.aulaapijovemprogramador.application.dto.usuario.UsuarioCriarReq
 import com.senac.aulaapijovemprogramador.application.dto.usuario.UsuarioResponseDto;
 import com.senac.aulaapijovemprogramador.application.services.UsuarioService;
 
-import com.senac.aulaapijovemprogramador.domain.entities.Usuario;
-import com.senac.aulaapijovemprogramador.domain.repository.UsuarioRepository;
-import com.senac.aulaapijovemprogramador.domain.valueobjects.EnumStatusUsuario;
-
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,8 +21,6 @@ public class UsuarioController {
     @Autowired
     private UsuarioService usuarioService;
 
-    @Autowired
-    private UsuarioRepository usuarioRepository;
 
     @GetMapping
     @Operation(summary = "Listar todos",description = "Método para listar todos os usuários!")
@@ -86,36 +79,18 @@ public class UsuarioController {
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete de usuário!",description = "Método responsavel por deletar um usuario")
     public ResponseEntity<?> deletarUsuario(@PathVariable Long id){
-
-        var usuario = usuarioRepository.findById(id).orElse(null);
-
-        if(usuario == null){
-            return ResponseEntity.notFound().build();
-        }
-
-        usuario.setStatus(EnumStatusUsuario.EXCLUIDO);
-        usuarioRepository.save(usuario);
-
-        return  ResponseEntity.ok().build();
+        return usuarioService.excluirUsuario(id) ?
+                ResponseEntity.ok().build() :
+                ResponseEntity.notFound().build();
     }
-
-
-
 
     @PatchMapping("/{id}/bloquear")
     @Operation(summary = "Bloquear de usuário!",description = "Método responsavel por Bloquear um usuario")
     public ResponseEntity<?> atualizarBloquear(@PathVariable Long id){
 
-        var usuario = usuarioRepository.findByIdAndStatusNot(id,EnumStatusUsuario.EXCLUIDO).orElse(null);
-
-        if(usuario == null){
-            return ResponseEntity.notFound().build();
-        }
-
-        usuario.setStatus(EnumStatusUsuario.BLOQUEADO);
-        usuarioRepository.save(usuario);
-
-        return  ResponseEntity.ok().build();
+        return usuarioService.bloquearUsuario(id) ?
+                ResponseEntity.ok().build() :
+                ResponseEntity.notFound().build();
     }
 
 
@@ -124,15 +99,8 @@ public class UsuarioController {
     @Operation(summary = "Desbloquear de usuário!",description = "Método responsavel por Desbloquear um usuario")
     public ResponseEntity<?> atualizarDesbloquear(@PathVariable Long id){
 
-        var usuario = usuarioRepository.findByIdAndStatusNot(id,EnumStatusUsuario.EXCLUIDO).orElse(null);
-
-        if(usuario == null){
-            return ResponseEntity.notFound().build();
-        }
-
-        usuario.setStatus(EnumStatusUsuario.ATIVO);
-        usuarioRepository.save(usuario);
-
-        return  ResponseEntity.ok().build();
+        return usuarioService.desbloquearUsuario(id) ?
+                ResponseEntity.ok().build() :
+                ResponseEntity.notFound().build();
     }
 }

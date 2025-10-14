@@ -50,4 +50,67 @@ public class UsuarioService {
         usuarioRepository.save(usuarioBanco);
         return new UsuarioResponseDto(usuarioBanco);
     }
+
+
+    public boolean excluirUsuario(Long id){
+       try{
+            var usuario = usuarioRepository.findById(id).orElse(null);
+
+            if(usuario == null){
+                return false;
+            }
+
+           alterarStatusUsuario(usuario,EnumStatusUsuario.EXCLUIDO);
+
+            return true;
+       }catch (Exception e){
+           System.out.print("Erro ao excluir usuaria!");
+           return false;
+       }
+    }
+
+    public boolean bloquearUsuario(Long id){
+
+        try {
+
+            var usuario = usuarioRepository.findByIdAndStatusNot(id,EnumStatusUsuario.EXCLUIDO).orElse(null);
+
+            if(usuario == null){
+                return false;
+            }
+
+            alterarStatusUsuario(usuario,EnumStatusUsuario.BLOQUEADO);
+
+            return true;
+        }catch (Exception e){
+            System.out.println("Erro ao bloquear usuario!");
+            return false;
+        }
+    }
+
+
+    public boolean desbloquearUsuario(Long id){
+
+        try {
+
+            var usuario = usuarioRepository.findByIdAndStatusNot(id,EnumStatusUsuario.EXCLUIDO).orElse(null);
+
+            if(usuario == null){
+                return false;
+            }
+
+            alterarStatusUsuario(usuario,EnumStatusUsuario.ATIVO);
+            return true;
+        }catch (Exception e){
+            System.out.println("Erro ao bloquear usuario!");
+            return false;
+        }
+    }
+
+    private void alterarStatusUsuario(Usuario usuario, EnumStatusUsuario statusUsuario){
+
+        usuario.setStatus(EnumStatusUsuario.EXCLUIDO);
+        usuarioRepository.save(usuario);
+
+    }
 }
