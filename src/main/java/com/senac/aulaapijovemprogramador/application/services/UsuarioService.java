@@ -108,9 +108,7 @@ public class UsuarioService {
     }
 
     private void alterarStatusUsuario(Usuario usuario, EnumStatusUsuario statusUsuario){
-
-        usuario.setStatus(EnumStatusUsuario.EXCLUIDO);
+        usuario.setStatus(statusUsuario);
         usuarioRepository.save(usuario);
-
     }
 }

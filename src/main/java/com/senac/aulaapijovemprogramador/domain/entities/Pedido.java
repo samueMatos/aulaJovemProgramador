@@ -1,5 +1,12 @@
 package com.senac.aulaapijovemprogramador.domain.entities;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Pedido {
 
     private Long id;
@@ -7,14 +14,6 @@ public class Pedido {
     double valor;
     String status;
     double custo;
-
-    public String getDescricao() {
-        return descricao ;
-    }
-
-    public void setDescricao(String descricao) {
-        this.descricao = descricao+ " Pedido normal!";
-    }
 
     public double cacularLucro(){
         return this.valor - this.custo;
