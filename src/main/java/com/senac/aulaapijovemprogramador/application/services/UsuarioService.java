@@ -2,6 +2,7 @@ package com.senac.aulaapijovemprogramador.application.services;
 
 import com.senac.aulaapijovemprogramador.application.dto.usuario.UsuarioCriarRequestDto;
 import com.senac.aulaapijovemprogramador.application.dto.usuario.UsuarioResponseDto;
+import com.senac.aulaapijovemprogramador.domain.entities.Administrador;
 import com.senac.aulaapijovemprogramador.domain.entities.Usuario;
 import com.senac.aulaapijovemprogramador.domain.repository.UsuarioRepository;
 import com.senac.aulaapijovemprogramador.domain.valueobjects.EnumStatusUsuario;
@@ -20,15 +21,21 @@ public class UsuarioService {
 
     public List<UsuarioResponseDto> listarTodos(){
 
-        return  usuarioRepository
-                .findAllByStatusNot(EnumStatusUsuario.EXCLUIDO)
-                .stream()
-                .map(UsuarioResponseDto::new)
-                .collect(Collectors.toList());
+        try {
+            return  usuarioRepository
+                    .findAllByStatusNot(EnumStatusUsuario.EXCLUIDO)
+                    .stream()
+                    .map(UsuarioResponseDto::new)
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
     public UsuarioResponseDto buscarPorId(Long id){
 
-        return usuarioRepository.findByIdAndStatusNot(id, EnumStatusUsuario.EXCLUIDO)
+
+        var usuarioBanco =usuarioRepository.findByIdAndStatusNot(id, EnumStatusUsuario.EXCLUIDO);
+        return usuarioBanco
                 .stream()
                 .map(UsuarioResponseDto::new)
                 .findFirst()
@@ -40,7 +47,15 @@ public class UsuarioService {
         var usuarioBanco = usuarioRepository
                 .findByCpf_CpfAndStatusNot(usuarioRequest.cpf(),
                         EnumStatusUsuario.EXCLUIDO)
-                .orElse(new Usuario(usuarioRequest));
+                .orElse(null);
+
+        if(usuarioBanco == null){
+            if(usuarioRequest.isAdm()){
+                usuarioBanco = new Administrador(usuarioRequest);
+            }else {
+                usuarioBanco = new Usuario(usuarioRequest);
+            }
+        }
 
         if(usuarioBanco.getId() != null){
             usuarioBanco = usuarioBanco
@@ -108,9 +123,7 @@ public class UsuarioService {
     }
 
     private void alterarStatusUsuario(Usuario usuario, EnumStatusUsuario statusUsuario){
-
-        usuario.setStatus(EnumStatusUsuario.EXCLUIDO);
+        usuario.setStatus(statusUsuario);
         usuarioRepository.save(usuario);
-
     }
 }

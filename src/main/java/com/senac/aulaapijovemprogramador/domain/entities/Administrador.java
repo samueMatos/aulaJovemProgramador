@@ -1,18 +1,23 @@
 package com.senac.aulaapijovemprogramador.domain.entities;
 
+
+import com.senac.aulaapijovemprogramador.application.dto.usuario.UsuarioCriarRequestDto;
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Entity
+@Data
+@DiscriminatorValue("ADMIN")
+@NoArgsConstructor
 public class Administrador extends Usuario {
     private boolean acessoIrrestrito;
 
-
-
-    public boolean isAcessoIrrestrito() {
-        return acessoIrrestrito;
+    public Administrador(UsuarioCriarRequestDto usuarioRequest) {
+        super(usuarioRequest);
+        this.setAcessoIrrestrito(true);
     }
-
-    public void setAcessoIrrestrito(boolean acessoIrrestrito) {
-        this.acessoIrrestrito = acessoIrrestrito;
-    }
-
 
     @Override
     public String apresentar() {

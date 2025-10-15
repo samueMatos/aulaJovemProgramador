@@ -1,20 +1,29 @@
 package com.senac.aulaapijovemprogramador.domain.entities;
 
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Entity
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Pedido {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String descricao;
-    double valor;
-    String status;
-    double custo;
+    private double valor;
+    private String status;
+    private double custo;
 
-    public String getDescricao() {
-        return descricao ;
-    }
+    @ManyToOne
+    @JoinColumn(name = "empresa_id")
+    private Empresa empresa;
 
-    public void setDescricao(String descricao) {
-        this.descricao = descricao+ " Pedido normal!";
-    }
 
     public double cacularLucro(){
         return this.valor - this.custo;

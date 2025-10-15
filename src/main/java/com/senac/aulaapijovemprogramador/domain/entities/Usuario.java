@@ -4,23 +4,24 @@ import com.senac.aulaapijovemprogramador.application.dto.usuario.UsuarioCriarReq
 import com.senac.aulaapijovemprogramador.domain.valueobjects.CPF;
 import com.senac.aulaapijovemprogramador.domain.valueobjects.EnumStatusUsuario;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.Set;
 
 
 @Entity
+@Data
+@Table(name = "usuario")
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "tipo_usuario", discriminatorType = DiscriminatorType.STRING)
+@DiscriminatorValue("USUARIO")
+@AllArgsConstructor
+@NoArgsConstructor
+
 public class Usuario {
-
-    public Usuario(){}
-
-    public Usuario (UsuarioCriarRequestDto usuario){
-        this.email =usuario.email();
-        this.senha = usuario.senha();
-        this.cpf = new CPF(usuario.cpf());
-        this.nome = usuario.nome();
-    }
-
-
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,6 +31,8 @@ public class Usuario {
 
     private String senha;
 
+    @Column(name="tipo_usuario", insertable = false, updatable = false,nullable = true)
+    private String tipo_usuario;
 
     @Embedded
     private CPF cpf;
@@ -40,73 +43,19 @@ public class Usuario {
 
     private EnumStatusUsuario status = EnumStatusUsuario.ATIVO;
 
-    @OneToMany
-    @JoinColumn(name = "usuario_id",nullable = true)
-    private List<Menu> menuAcesso;
+    @ManyToMany
+    @JoinTable(
+            name = "menu_usuario",
+            joinColumns = @JoinColumn( name = "usuario_id"),
+            inverseJoinColumns = @JoinColumn(name = "menu_id")
+    )
+    private Set<Menu> menuAcesso;
 
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    public String getSenha() {
-        return senha;
-    }
-
-    public void setSenha(String senha) {
-        this.senha = senha;
-    }
-
-    public CPF getCpf() {
-        return cpf;
-    }
-
-    public void setCpf(CPF cpf) {
-        this.cpf = cpf;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getTelefone() {
-        return telefone;
-    }
-
-    public void setTelefone(String telefone) {
-        this.telefone = telefone;
-    }
-
-    public List<Menu> getMenuAcesso() {
-        return menuAcesso;
-    }
-
-    public void setMenuAcesso(List<Menu> menuAcesso) {
-        this.menuAcesso = menuAcesso;
-    }
-
-    public EnumStatusUsuario getStatus() {
-        return status;
-    }
-
-    public void setStatus(EnumStatusUsuario status) {
-        this.status = status;
+    public Usuario (UsuarioCriarRequestDto usuario){
+        this.email =usuario.email();
+        this.senha = usuario.senha();
+        this.cpf = new CPF(usuario.cpf());
+        this.nome = usuario.nome();
     }
 
     public Usuario atulizarUsuarioFromDTO(Usuario usuarioBanco, UsuarioCriarRequestDto dto){
