@@ -1,0 +1,41 @@
+name: CI/CD Docker build and Test
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v3
+
+      - name: 🔧 Instalar o docker compose
+        run: |
+          sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+          sudo chmod +x /usr/local/bin/docker-compose
+
+      - name: 🐋 Subir ambiente com Docker Compose
+        run: docker-compose up -d
+
+      - name: ⏱️ Aguardar os contêineres estabilizarem
+        run: |
+          echo "Aguardando 30 segundos para os serviços iniciarem..."
+          sleep 30
+
+      - name: 🩺 Verificar status dos contêineres
+        run: |
+          echo "--- Status dos Contêineres ---"
+          docker-compose ps
+          echo "--- Logs do Banco de Dados ---"
+          docker-compose logs db || echo "Serviço 'db' não encontrado ou sem logs."
+          echo "--- Logs da API ---"
+          docker-compose logs api || echo "Serviço 'api' não encontrado ou sem logs."
+      - name: 📞 Realizar teste de saúde na API
+        run: curl --fail http://localhost:8080/swagger-ui/index.html
+
+      - name: 🛑 Parar os contêineres após teste
+        if: always()
+        run: docker-compose down
