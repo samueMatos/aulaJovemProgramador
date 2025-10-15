@@ -133,7 +133,7 @@ public class AulaapijovemprogramadorApplication {
 //			System.out.println(u.getValue().apresentar());
 //		}
 
-		//SpringApplication.run(AulaapijovemprogramadorApplication.class, args);
+		SpringApplication.run(AulaapijovemprogramadorApplication.class, args);
 
 	}
 
