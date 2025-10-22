@@ -25,6 +25,11 @@ public class Pedido {
     private Empresa empresa;
 
 
+    @OneToOne
+    @JoinColumn(name = "nota_id")
+    private NotaFiscal notaFiscal;
+
+
     public double cacularLucro(){
         return this.valor - this.custo;
     }
