@@ -27,12 +27,14 @@ jobs:
 
       - name: 🩺 Verificar status dos contêineres
         run: |
-          echo "--- Status dos Contêineres ---"
-          docker-compose ps
+          echo "--- Status dos Contêineres (incluindo os que falharam) ---"
+          docker-compose ps -a  # O "-a" é crucial, mostra TODOS, até os que deram crash
+            
           echo "--- Logs do Banco de Dados ---"
-          docker-compose logs meu-postgres-local || echo "Serviço 'meu-postgres-local' não encontrado ou sem logs."
+          docker-compose logs postgres_db 
+            
           echo "--- Logs da API ---"
-          docker-compose logs api-aula || echo "Serviço 'api-aula' não encontrado ou sem logs."
+          docker-compose logs spring_app
 
       - name: 📞 Realizar teste de saúde na API
         run: curl --fail http://localhost:8080/swagger-ui/index.html
