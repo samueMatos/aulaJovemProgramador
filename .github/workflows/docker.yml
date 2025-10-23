@@ -36,8 +36,28 @@ jobs:
           echo "--- Logs da API ---"
           docker-compose logs spring_app
 
-      - name: 📞 Realizar teste de saúde na API
-        run: curl --fail http://localhost:8080/swagger-ui/index.html
+      - name: 📞 Testar API (com retentativas)
+        run: |
+          echo "Aguardando a API ficar online... (Máx 2 min)"
+          n=0
+          until [ $n -ge 12 ]
+          do
+          # O "curl --fail" falha com exit code se o HTTP não for 200
+          if curl --fail http://localhost:8080/swagger-ui/index.html; then
+            echo "✅ API está online!"
+            break # Sucesso, sai do loop
+          fi
+            
+          n=$((n+1))
+          echo "Tentativa $n/12 falhou. Aguardando 10s..."
+          sleep 10
+          done
+            
+          # Se o loop terminar (n=12) sem sucesso, falha o build
+          if [ $n -eq 12 ]; then
+          echo "❌ API não respondeu após 2 minutos."
+          exit 1
+          fi
 
       - name: 🛑 Parar os contêineres após teste
         if: always()
