@@ -28,13 +28,13 @@ jobs:
       - name: 🩺 Verificar status dos contêineres
         run: |
           echo "--- Status dos Contêineres (incluindo os que falharam) ---"
-          docker-compose ps -a  # O "-a" é crucial, mostra TODOS, até os que deram crash
+          docker-compose ps -a
             
           echo "--- Logs do Banco de Dados ---"
-          docker-compose logs postgres_db 
+          docker-compose logs meu-postgres-local 
             
           echo "--- Logs da API ---"
-          docker-compose logs spring_app
+          docker-compose logs api-aula
 
       - name: 📞 Testar API (com retentativas)
         run: |
