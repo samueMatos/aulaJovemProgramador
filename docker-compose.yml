@@ -10,6 +10,12 @@ services:
       - POSTGRES_DB=aulaapi
     volumes:
       - postgres-data-local:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 10s       # Tenta a cada 10 segundos
+      timeout: 5s
+      retries: 10         # Aumentamos as tentativas para 10
+      start_period: 90s   # <-- A GRANDE MUDANÇA
 
   api-spring:
     container_name: api-aula
@@ -21,7 +27,8 @@ services:
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=123456
     depends_on:
-      - postgres-db
+      postgres-db:
+        condition: service_healthy
 
 volumes:
   postgres-data-local:
