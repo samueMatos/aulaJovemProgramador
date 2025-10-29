@@ -4,6 +4,7 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.senac.aulaapijovemprogramador.application.dto.auth.LoginRequestDto;
+import com.senac.aulaapijovemprogramador.application.dto.usuario.UsuarioLogadoDto;
 import com.senac.aulaapijovemprogramador.domain.entities.Token;
 import com.senac.aulaapijovemprogramador.domain.entities.Usuario;
 import com.senac.aulaapijovemprogramador.domain.repository.TokenRepository;
@@ -55,7 +56,7 @@ public class TokenService {
        }
     }
 
-    public Usuario consultarUsuarioPorToken(String token) throws Exception {
+    public UsuarioLogadoDto consultarUsuarioPorToken(String token) throws Exception {
        var tokenBanco = tokenRepository.findByToken(token)
                .orElseThrow(()-> new  Exception("Token não encontrado!"));
 
@@ -66,7 +67,7 @@ public class TokenService {
        tokenBanco.setDataExpiracao(LocalDateTime.now().plusMinutes(tempo));
        tokenRepository.save(tokenBanco);
 
-       return tokenBanco.getUsuario();
+       return new UsuarioLogadoDto(tokenBanco.getUsuario());
     }
 
     public void salvarToken(String token, LocalDateTime dataExpiracaos, Usuario usuario){

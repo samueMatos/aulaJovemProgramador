@@ -10,6 +10,8 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Data
+
+
 @NoArgsConstructor
 @AllArgsConstructor
 public class NotaFiscal {
